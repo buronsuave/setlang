@@ -1,0 +1,44 @@
+Set Nom:={a,b,cde,1,3xy};
+Set L:={a,b,c};
+Sets;
+	>> Nom,L
+ShowSets;
+	>> Nom:={a,b,cde,1,3xy};
+	>> L := {a,b,c};
+Union Nom,L; '// Nom Union L; // L Union Nom;'
+	>> {a,b,c,cde,1,3xy}
+Nom Intersection L; '// Intersection Nom,L; // L Intersection Nom;'
+	>> {a,b}
+Sets;
+	>> Nom,L;
+Set Union x,Nom,L; '// Set x:=Nom Union L;'
+Sets;
+	>> Nom,L,x
+Set y := Nom Intersection L; '// Set Intersection y,Nom,L;'
+Clear Nom;
+ShowSet Nom;
+	>> {}
+Sets;
+	>> Nom,L,x,y
+Delete Nom;
+ShowSet Nom;
+	>> Set does not exists
+Sets;
+	>> L,x,y
+
+'// Custom operation concat: makes a cross product of all items of a given set'
+Set L1 := {a, b, c};
+Set L2 := {1, 2};
+Concat L1, L2;
+	>> {a1,a2,b1,b2,c1,c2}
+
+'// Supports flexible syntax'
+L1 Concat L2; // Concat L1, L2
+	>> {a1,a2,b1,b2,c1,c2}
+
+'// Supports assignation'
+Set Concat x,L1,L2; // Set x := L1 Concat L2;
+
+'// Is not conmutative (Concat L1, L2 != Concat L2, L1)'
+Concat L2, L1; // L2 Concat L1;
+	>> {1a,1b,1c,2a,2b,2c}
