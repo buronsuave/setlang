@@ -1,8 +1,8 @@
 # SetLang
 ## How to run
 ```sh
-make clean;
-make;
+make clean
+make
 
 make run FILE=<path-of-sl-file>
 # Example
