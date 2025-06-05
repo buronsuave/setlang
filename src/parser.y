@@ -40,14 +40,15 @@ cmd_mono_stmt:
 
 cmd_bin_stmt:
     VAR CMD_BIN VAR SMC              { printf("Valid bin infix\n"); }
-    | CMD_BIN VAR VAR SMC            { printf("Valid bin prefix\n"); }
+    | CMD_BIN VAR COLON VAR SMC            { printf("Valid bin prefix\n"); }
     ;
 
 set_declaration_stmt:
     CMD_SET VAR ASSIGN set_content SMC { printf("Valid set declaration\n"); }
-    | CMD_SET VAR ASSIGN CMD_BIN VAR VAR SMC { printf("Valid derived (prefix) set\n"); }
+    | CMD_SET VAR ASSIGN CMD_BIN VAR COLON VAR SMC { printf("Valid derived (prefix) set\n"); }
     | CMD_SET VAR ASSIGN VAR CMD_BIN VAR SMC { printf("Valid derived (infix) set\n"); }
-    ;
+    | CMD_SET CMD_BIN VAR COLON VAR COLON VAR SMC { printf("Valide derived (operands at the end) set\n"); }    
+;
 
 set_content:
     OPENKEY elements CLOSEKEY
