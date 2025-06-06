@@ -1,26 +1,31 @@
+%option noyywrap
+
 %{
 #include "parser.tab.h"
-#include <stdio.h>
+#include "string_stack.h"
+#include <string>
+#include <cstring>
+#include <iostream>
+
+#define PUSH_TOKEN(token) gStringStack.push(std::string(token))
 %}
 
 %%
-Concat          { return CMD_BIN; }
-Clear           { return CMD_MONO; }
-Delete          { return CMD_MONO; }
-Union           { return CMD_BIN; }
-Intersection    { return CMD_BIN; }
-ShowSets        { return CMD_NONE; }
-ShowSet         { return CMD_MONO; }
-Sets            { return CMD_NONE; }
+Concat          { PUSH_TOKEN(yytext); return CMD_BIN; }
+Clear           { PUSH_TOKEN(yytext); return CMD_MONO; }
+Delete          { PUSH_TOKEN(yytext); return CMD_MONO; }
+Union           { PUSH_TOKEN(yytext); return CMD_BIN; }
+Intersection    { PUSH_TOKEN(yytext); return CMD_BIN; }
+ShowSets        { PUSH_TOKEN(yytext); return CMD_NONE; }
+ShowSet         { PUSH_TOKEN(yytext); return CMD_MONO; }
+Sets            { PUSH_TOKEN(yytext); return CMD_NONE; }
 Set             { return CMD_SET; }
 ":="            { return ASSIGN; }
 ";"             { return SMC; }
 "{"             { return OPENKEY; }
 "}"             { return CLOSEKEY; }
 ","             { return COLON; }
-[a-zA-Z0-9]+    { yylval.str = strdup(yytext); return VAR; }
+[a-zA-Z0-9]+    { PUSH_TOKEN(yytext); return VAR; }
 [ \t\n]+        ;  // Ignore whitespace
-.               { printf("Unknown token: %s\n", yytext); return 0; }
+.               { std::cerr << "Unknown token: " << yytext << "\n"; return 0; }
 %%
-
-int yywrap() { return 1; }

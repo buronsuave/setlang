@@ -1,32 +1,39 @@
 # Makefile for setlang project
 
-# Variables
+# Directories
 SRC_DIR := src
 BIN_DIR := bin
+
+# Executable
 EXE := $(BIN_DIR)/setlang
 
+# Sources
 LEX_SRC := $(SRC_DIR)/lexer.l
 YACC_SRC := $(SRC_DIR)/parser.y
 LEX_C := $(SRC_DIR)/lex.yy.c
 YACC_C := $(SRC_DIR)/parser.tab.c
 YACC_H := $(SRC_DIR)/parser.tab.h
 
-CC := gcc
-CFLAGS := -Wall -Wextra
+CPP_SRCS := $(SRC_DIR)/string_stack.cpp $(SRC_DIR)/set_storage.cpp
+OBJ_SRCS := $(LEX_C) $(YACC_C) $(CPP_SRCS)
+
+# Compiler and flags
+CXX := g++
+CXXFLAGS := -std=c++17 -Wall -Wextra
 
 # Default target
 all: $(EXE)
 
-# Binary depends on generated C files
-$(EXE): $(LEX_C) $(YACC_C)
+# Final binary
+$(EXE): $(OBJ_SRCS)
 	mkdir -p $(BIN_DIR)
-	$(CC) $(LEX_C) $(YACC_C) -o $(EXE)
+	$(CXX) $(CXXFLAGS) $(OBJ_SRCS) -o $(EXE)
 
-# Generate lex.yy.c from lexer.l
+# Lex file
 $(LEX_C): $(LEX_SRC)
 	flex -o $(LEX_C) $(LEX_SRC)
 
-# Generate parser.tab.c and parser.tab.h from parser.y
+# Bison files
 $(YACC_C) $(YACC_H): $(YACC_SRC)
 	bison -d -o $(YACC_C) $(YACC_SRC)
 
@@ -36,15 +43,16 @@ ifndef FILE
 	@read -p "Enter input file (.sl): " file; \
 	if [ -f $$file ]; then $(EXE) < $$file; else echo "File not found: $$file"; fi
 else
-	@# Suppress command echo here:
 	@if [ -f $(FILE) ]; then $(EXE) < $(FILE); else echo "File not found: $(FILE)"; fi
 endif
 
-# Clean generated files
+# Clean generated files (but not final binary)
 clean:
 	rm -f $(LEX_C) $(YACC_C) $(YACC_H)
-	rm -f $(EXE)
 
 # Clean everything
 distclean: clean
-	rm -rf $(BIN_DIR)
+	rm -f $(EXE)
+	rm -f $(SRC_DIR)/parser_app  # Remove stray builds
+
+.PHONY: all clean distclean run
